@@ -1,0 +1,72 @@
+{
+    "algorithm": {
+        "name": "HHL"
+    },
+    "backend": {
+        "basis_gates": null,
+        "coupling_map": null,
+        "initial_layout": null,
+        "max_credits": 10,
+        "name": "statevector_simulator",
+        "provider": "qiskit.Aer",
+        "shots": 10,
+        "skip_transpiler": false,
+        "timeout": null,
+        "wait": 5.0
+    },
+    "eigs": {
+        "evo_time": null,
+        "expansion_mode": "suzuki",
+        "expansion_order": 2,
+        "hermitian_matrix": true,
+        "name": "EigsQPE",
+        "negative_evals": false,
+        "num_ancillae": 3,
+        "num_time_slices": 50
+    },
+    "initial_state": {
+        "name": "CUSTOM",
+        "state": "zero",
+        "state_vector": null
+    },
+    "input": {
+        "matrix": [
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                3
+            ]
+        ],
+        "name": "LinearSystemInput",
+        "vector": [
+            1,
+            0
+        ]
+    },
+    "iqft": {
+        "name": "STANDARD"
+    },
+    "problem": {
+        "circuit_cache_file": null,
+        "circuit_caching": false,
+        "name": "linear_system",
+        "random_seed": null,
+        "skip_qobj_deepcopy": false,
+        "skip_qobj_validation": false
+    },
+    "qft": {
+        "name": "STANDARD"
+    },
+    "reciprocal": {
+        "evo_time": null,
+        "lambda_min": null,
+        "name": "Lookup",
+        "negative_evals": false,
+        "pat_length": null,
+        "scale": 0.0,
+        "subpat_length": null
+    }
+}
