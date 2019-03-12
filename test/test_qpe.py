@@ -16,21 +16,20 @@
 # =============================================================================
 
 import unittest
+
 import numpy as np
 from parameterized import parameterized
 from scipy import sparse
 from scipy.linalg import expm
-
 from qiskit.transpiler import PassManager
-from qiskit.qobj import RunConfig
-from qiskit.aqua import get_aer_backend
+
+from qiskit import BasicAer
 from qiskit.aqua import Operator, QuantumInstance
 from qiskit.aqua.utils import decimal_to_binary
 from qiskit.aqua.algorithms import ExactEigensolver
 from qiskit.aqua.algorithms import QPE
 from qiskit.aqua.components.iqfts import Standard
 from qiskit.aqua.components.initial_states import Custom
-
 from test.common import QiskitAquaTestCase
 
 
@@ -98,9 +97,8 @@ class TestQPE(QiskitAquaTestCase):
                   expansion_mode='suzuki', expansion_order=2,
                   shallow_circuit_concat=True)
 
-        backend = get_aer_backend(simulator)
-        run_config = RunConfig(shots=100, max_credits=10, memory=False)
-        quantum_instance = QuantumInstance(backend, run_config, pass_manager=PassManager())
+        backend = BasicAer.get_backend(simulator)
+        quantum_instance = QuantumInstance(backend, shots=100, pass_manager=PassManager())
 
         # run qpe
         result = qpe.run(quantum_instance)

@@ -24,7 +24,7 @@ from test.common import QiskitAquaTestCase
 from qiskit.aqua import run_algorithm
 from qiskit.aqua.input import LinearSystemInput
 from qiskit.aqua.utils import random_matrix_generator as rmg
-
+from qiskit.quantum_info import state_fidelity
 
 class TestHHL(QiskitAquaTestCase):
     """HHL tests."""
@@ -53,6 +53,7 @@ class TestHHL(QiskitAquaTestCase):
                 'scale': 0.0
             },
             'backend': {
+                'provider': 'qiskit.BasicAer',
                 'name': 'statevector_simulator',
                 'skip_transpiler': False
             }
@@ -79,7 +80,7 @@ class TestHHL(QiskitAquaTestCase):
         linalg_normed = linalg_solution/np.linalg.norm(linalg_solution)
 
         # compare result
-        fidelity = abs(linalg_normed.dot(hhl_normed.conj()))**2
+        fidelity = state_fidelity(linalg_normed, hhl_normed)
         np.testing.assert_approx_equal(fidelity, 1, significant=5)
 
         self.log.debug('HHL solution vector:       {}'.format(hhl_solution))
@@ -113,7 +114,7 @@ class TestHHL(QiskitAquaTestCase):
         linalg_normed = linalg_solution/np.linalg.norm(linalg_solution)
 
         # compare result
-        fidelity = abs(linalg_normed.dot(hhl_normed.conj()))**2
+        fidelity = state_fidelity(linalg_normed, hhl_normed)
         np.testing.assert_approx_equal(fidelity, 1, significant=5)
 
         self.log.debug('HHL solution vector:       {}'.format(hhl_solution))
@@ -146,7 +147,7 @@ class TestHHL(QiskitAquaTestCase):
         linalg_normed = linalg_solution/np.linalg.norm(linalg_solution)
 
         # compare result
-        fidelity = abs(linalg_normed.dot(hhl_normed.conj()))**2
+        fidelity = state_fidelity(linalg_normed, hhl_normed)
         np.testing.assert_approx_equal(fidelity, 1, significant=5)
 
         self.log.debug('HHL solution vector:       {}'.format(hhl_solution))
@@ -166,8 +167,9 @@ class TestHHL(QiskitAquaTestCase):
             'matrix': matrix,
             'vector': vector
         }
+        qasm_params['reciprocal']['scale'] = 0.5
         qasm_params['backend']['name'] = 'qasm_simulator'
-        qasm_params['backend']['shots'] = 600
+        qasm_params['backend']['shots'] = 1000
 
         # run hhl
         result = run_algorithm(qasm_params)
@@ -178,8 +180,8 @@ class TestHHL(QiskitAquaTestCase):
         linalg_normed = linalg_solution/np.linalg.norm(linalg_solution)
 
         # compare result
-        fidelity = abs(linalg_normed.dot(hhl_normed.conj()))**2
-        self.assertTrue(fidelity > 0.8)
+        fidelity = state_fidelity(linalg_normed, hhl_normed)
+        self.assertGreater(fidelity, 0.8)
 
         self.log.debug('HHL solution vector:       {}'.format(hhl_solution))
         self.log.debug('algebraic solution vector: {}'.format(linalg_solution))
@@ -212,7 +214,7 @@ class TestHHL(QiskitAquaTestCase):
         linalg_normed = linalg_solution/np.linalg.norm(linalg_solution)
 
         # compare result
-        fidelity = abs(linalg_normed.dot(hhl_normed.conj()))**2
+        fidelity = state_fidelity(linalg_normed, hhl_normed)
         np.testing.assert_approx_equal(fidelity, 1, significant=3)
 
         self.log.debug('HHL solution vector:       {}'.format(hhl_solution))
@@ -244,7 +246,7 @@ class TestHHL(QiskitAquaTestCase):
         linalg_normed = linalg_solution/np.linalg.norm(linalg_solution)
 
         # compare result
-        fidelity = abs(linalg_normed.dot(hhl_normed.conj()))**2
+        fidelity = state_fidelity(linalg_normed, hhl_normed)
         np.testing.assert_approx_equal(fidelity, 1, significant=2)
 
         self.log.debug('HHL solution vector:       {}'.format(hhl_solution))

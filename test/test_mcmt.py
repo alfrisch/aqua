@@ -16,54 +16,31 @@
 # =============================================================================
 
 import unittest
-
+import itertools
 import numpy as np
+
 from parameterized import parameterized
 from qiskit import QuantumCircuit, QuantumRegister
-from qiskit.aqua import get_aer_backend
 from qiskit import execute as q_execute
 from qiskit.quantum_info import state_fidelity
+
+from qiskit import BasicAer
 from test.common import QiskitAquaTestCase
+
+nums_controls = [i + 1 for i in range(7)]
+nums_targets = [i + 1 for i in range(5)]
+single_qubit_gates = [QuantumCircuit.ch, QuantumCircuit.cz]
 
 
 class TestMCMTGate(QiskitAquaTestCase):
-    @parameterized.expand([
-        (1, 1, QuantumCircuit.ch),
-        (2, 1, QuantumCircuit.ch),
-        (2, 2, QuantumCircuit.ch),
-        (2, 3, QuantumCircuit.ch),
-        (3, 1, QuantumCircuit.ch),
-        (3, 2, QuantumCircuit.ch),
-        (3, 3, QuantumCircuit.ch),
-        (3, 4, QuantumCircuit.ch),
-        (4, 1, QuantumCircuit.ch),
-        (4, 2, QuantumCircuit.ch),
-        (4, 3, QuantumCircuit.ch),
-        (5, 3, QuantumCircuit.ch),
-        (5, 4, QuantumCircuit.ch),
-        (6, 3, QuantumCircuit.ch),
-        (6, 4, QuantumCircuit.ch),
-        (7, 1, QuantumCircuit.ch),
-        (7, 3, QuantumCircuit.ch),
-        (2, 1, QuantumCircuit.cz),
-        (2, 2, QuantumCircuit.cz),
-        (2, 3, QuantumCircuit.cz),
-        (3, 1, QuantumCircuit.cz),
-        (3, 2, QuantumCircuit.cz),
-        (3, 3, QuantumCircuit.cz),
-        (3, 4, QuantumCircuit.cz),
-        (4, 2, QuantumCircuit.cz),
-        (4, 3, QuantumCircuit.cz),
-        (4, 4, QuantumCircuit.cz),
-        (5, 2, QuantumCircuit.cz),
-        (5, 1, QuantumCircuit.cz),
-        (6, 1, QuantumCircuit.cz),
-        (6, 5, QuantumCircuit.cz),
-        (7, 2, QuantumCircuit.cz),
-        (7, 4, QuantumCircuit.cz),
-    ])
+    @parameterized.expand(
+        itertools.product(nums_controls, nums_targets, single_qubit_gates)
+    )
     def test_mcmt(self, num_controls, num_targets,
                   single_control_gate_function):
+
+        if num_controls + num_targets > 10:
+            return
 
         c = QuantumRegister(num_controls, name='c')
         o = QuantumRegister(num_targets, name='o')
@@ -106,7 +83,7 @@ class TestMCMTGate(QiskitAquaTestCase):
                     qc.x(c[idx])
 
                 vec = np.asarray(
-                    q_execute(qc, get_aer_backend('statevector_simulator')).
+                    q_execute(qc, BasicAer.get_backend('statevector_simulator')).
                     result().get_statevector(qc, decimals=16))
                 # target register is initially |11...1>, with length equal to 2**(n_targets)
                 vec_exp = np.array([0] * (2**(num_targets) - 1) + [1])
